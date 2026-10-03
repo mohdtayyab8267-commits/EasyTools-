@@ -1,4 +1,9 @@
-name: Build Android APK
+
+    - name: Build APK with Gradle Wrapper
+      run: |
+        gradle wrapper --gradle-version 8.5
+        chmod +x gradlew
+        ./gradlew assembleDebug
 
 on:
   push:
