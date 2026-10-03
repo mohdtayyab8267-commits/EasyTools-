@@ -1,0 +1,136 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Generate Project & Build APK
+      run: |
+        mkdir -p app/src/main/java/com/easytools/app
+        mkdir -p app/src/main/res/values
+
+        # 1. AndroidManifest.xml
+        cat << 'EOF' > app/src/main/AndroidManifest.xml
+        <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+            package="com.easytools.app">
+            <application
+                android:allowBackup="true"
+                android:label="EasyTools">
+                <activity
+                    android:name=".MainActivity"
+                    android:exported="true">
+                    <intent-filter>
+                        <action android:name="android.intent.action.MAIN" />
+                        <category android:name="android.intent.category.LAUNCHER" />
+                    </intent-filter>
+                </activity>
+            </application>
+        </manifest>
+        EOF
+
+        # 2. MainActivity.kt
+        cat << 'EOF' > app/src/main/java/com/easytools/app/MainActivity.kt
+        package com.easytools.app
+        import android.os.Bundle
+        import androidx.appcompat.app.AppCompatActivity
+        class MainActivity : AppCompatActivity() {
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+            }
+        }
+        EOF
+
+        # 3. app/build.gradle.kts
+        cat << 'EOF' > app/build.gradle.kts
+        plugins {
+            id("com.android.application")
+            id("org.jetbrains.kotlin.android")
+        }
+        android {
+            namespace = "com.easytools.app"
+            compileSdk = 34
+            defaultConfig {
+                applicationId = "com.easytools.app"
+                minSdk = 24
+                targetSdk = 34
+                versionCode = 1
+                versionName = "1.0"
+            }
+        }
+        dependencies {
+            implementation("androidx.core:core-ktx:1.12.0")
+            implementation("androidx.appcompat:appcompat:1.6.1")
+        }
+        EOF
+
+        # 4. settings.gradle.kts
+        cat << 'EOF' > settings.gradle.kts
+        pluginManagement {
+            repositories {
+                google()
+                mavenCentral()
+                gradlePluginPortal()
+            }
+        }
+        dependencyResolutionManagement {
+            repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+            repositories {
+                google()
+                mavenCentral()
+            }
+        }
+        rootProject.name = "EasyTools"
+        include(":app")
+        EOF
+
+        # 5. build.gradle
+        cat << 'EOF' > build.gradle
+        buildscript {
+            repositories {
+                google()
+                mavenCentral()
+            }
+            dependencies {
+                classpath("com.android.tools.build:gradle:8.1.0")
+                classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
+            }
+        }
+        allprojects {
+            repositories {
+                google()
+                mavenCentral()
+            }
+        }
+        task clean(type: Delete) {
+            delete rootProject.buildDir
+        }
+        EOF
+
+        # 6. gradle.properties
+        echo "android.useAndroidX=true" > gradle.properties
+
+        # 7. Create Gradle Wrapper and Build
+        gradle wrapper --gradle-version 8.5
+        chmod +x gradlew
+        ./gradlew assembleDebug
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: EasyTools-APK
+        path: app/build/outputs/apk/debug/app-debug.apk
