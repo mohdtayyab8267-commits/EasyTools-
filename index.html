@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyTools - All Your Everyday Tools in One App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(135deg, #0052D4, #4364F7, #6FB1FC);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .card-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+        .card h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .card p {
+            font-size: 12px;
+            color: #777;
+        }
+        .section-view {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .back-btn {
+            background: #4364F7;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        .action-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>EasyTools[span_0](start_span)[span_0](end_span)</h1>
+        <p>All Your Everyday Tools in One App[span_1](start_span)[span_1](end_span)</p>
+    </header>
+
+    <div class="container">
+        <!-- होम स्क्रीन ग्रिड -->
+        <div id="home-screen" class="grid">
+            <div class="card" onclick="openTool('imgToPdf')">
+                <div class="card-icon">📄</div>
+                <h3>Image to PDF[span_2](start_span)[span_2](end_span)</h3>
+                <p>Convert images to PDF[span_3](start_span)[span_3](end_span)</p>
+            </div>
+            <div class="card" onclick="openTool('pdfToImg')">
+                <div class="card-icon">🖼️</div>
+                <h3>PDF to Image[span_4](start_span)[span_4](end_span)</h3>
+                <p>Extract pages as images[span_5](start_span)[span_5](end_span)</p>
+            </div>
+            <div class="card" onclick="openTool('compressImg')">
+                <div class="card-icon">📉</div>
+                <h3>Compress Image[span_6](start_span)[span_6](end_span)</h3>
+                <p>Reduce image size[span_7](start_span)[span_7](end_span)</p>
+            </div>
+            <div class="card" onclick="openTool('qrScanner')">
+                <div class="card-icon">📷</div>
+                <h3>QR Scanner[span_8](start_span)[span_8](end_span)</h3>
+                <p>Scan QR & barcodes[span_9](start_span)[span_9](end_span)</p>
+            </div>
+            <div class="card" onclick="openTool('unitConv')">
+                <div class="card-icon">🔄</div>
+                <h3>Unit Converter[span_10](start_span)[span_10](end_span)</h3>
+                <p>Convert units[span_11](start_span)[span_11](end_span)</p>
+            </div>
+            <div class="card" onclick="openTool('notes')">
+                <div class="card-icon">📝</div>
+                <h3>Notes / To-Do[span_12](start_span)[span_12](end_span)</h3>
+                <p>Manage your tasks[span_13](start_span)[span_13](end_span)</p>
+            </div>
+        </div>
+
+        <!-- टूल्स के अंदर के पेज (डिफ़ॉल्ट छिपे हुए) -->
+        <div id="tool-view" class="section-view">
+            <button class="back-btn" onclick="goHome()">← Back to Home</button>
+            <div id="tool-content"></div>
+        </div>
+    </div>
+
+    <script>
+        function openTool(toolName) {
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById('tool-view').style.display = 'block';
+            
+            let content = '';
+            if(toolName === 'imgToPdf') {
+                content = `<h2>Image to PDF</h2><p>Select images to convert into a single PDF document.</p><input type="file" multiple accept="image/*"><button class="action-btn" style="margin-top:10px;">Create PDF</button>`;
+            } else if(toolName === 'pdfToImg') {
+                content = `<h2>PDF to Image</h2><p>Select a PDF file to convert its pages into images.</p><input type="file" accept=".pdf"><button class="action-btn" style="margin-top:10px;">Convert to Images</button>`;
+            } else if(toolName === 'compressImg') {
+                content = `<h2>Compress Image</h2><p>Reduce image file size easily.</p><input type="file" accept="image/*"><button class="action-btn" style="margin-top:10px;">Compress Now</button>`;
+            } else if(toolName === 'qrScanner') {
+                content = `<h2>QR Scanner</h2><p>Point your camera to scan code.</p><div style="background:#000; color:#fff; height:150px; display:flex; align-items:center; justify-content:center; border-radius:8px; margin:10px 0;">Camera View Placeholder</div>`;
+            } else if(toolName === 'unitConv') {
+                content = `<h2>Unit Converter</h2><label>Select Type:</label><select><option>Length</option><option>Weight</option><option>Temperature</option></select><input type="number" placeholder="Enter value"><button class="action-btn">Convert</button>`;
+            } else if(toolName === 'notes') {
+                content = `<h2>Notes / To-Do</h2><textarea placeholder="Write your notes or to-do list here..." rows="5"></textarea><button class="action-btn">Save Note</button>`;
+            }
+            document.getElementById('tool-content').innerHTML = content;
+        }
+
+        function goHome() {
+            document.getElementById('tool-view').style.display = 'none';
+            document.getElementById('home-screen').style.display = 'grid';
+        }
+    </script>
+</body>
+</html>
